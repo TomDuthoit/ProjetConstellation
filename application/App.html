@@ -1,5 +1,5 @@
-<!doctype html> 
-<html lang="en"> 
+﻿<!doctype html> 
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" ng-app="MyDemoApp"> 
     
     <head> 
         <meta charset = "utf-8">
@@ -7,8 +7,41 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="js/bootstrap.min.js">
+
+        <title>Test API AngularJS</title>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/signalr/jquery.signalr-2.2.2.min.js"></script>
+        <script type="text/javascript" src="https://cdn.myconstellation.io/js/Constellation-1.8.2.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+        <script type="text/javascript" src="https://cdn.myconstellation.io/js/ngConstellation-1.8.2.min.js"></script>
+
+
+        <script>
+            var constellation = $.signalR.createConstellationConsumer("http://192.168.137.1:8088", "123456789", "Test API JS");
+
+            constellation.connection.start();
+
+            constellation.connection.stateChanged(function (change) {
+                if (change.newState === $.signalR.connectionState.connected) {
+                    console.log("Je suis connecté");
+
+                    constellation.client.registerStateObjectLink("*", "TeddyControllerPython", "Sensors", "*", function (so) {
+                        console.log(so);
+                        $("#CO2Level").text(so.Value.CO2Level);
+                        $("#SoundLevel").text(so.Value.SoundLevel);
+                        $("#Temperature").text(so.Value.Temperature);
+                        $("#Ledstate").text(so.Value.Ledstate);
+                    });
+                }
+            });
+
+        </script>
+        
+
+
     </head>
     <style type="text/css">
+
     body {
             width:100%;
             margin:0;
@@ -23,6 +56,7 @@
         width: 100px;
         height: 100px;
     }
+
     #Titre{
         font-family: 'AR HERMANN';
         font-size:80px;
@@ -30,21 +64,17 @@
         margin-right: auto;
         margin-left : auto;
     }
+
     #Logo{
         margin-block-end: 50px;
         margin-right: auto;
         margin-left : auto;
     }
+
     #Led{
         margin-block-end: 50px;
         margin-right: auto;
         margin-left : auto;
-    }
-
-    #Sound{
-        margin-block-end: 50px;
-        margin-right: auto;
-        margin-left : auto; 
     }
 
     #boite{
@@ -52,11 +82,13 @@
         margin-right: auto;
         margin-left : auto;
     }
+
     #boiteM{
         margin: 0 150px 0 150px; /*  haut droite bas gauche , taille de la boite */
         margin-right: auto;
         margin-left : auto;
     } 
+
     #co2, #decibels{
             
         border-style: solid; /* type de bordure du cadre */
@@ -89,6 +121,8 @@
         margin-left : auto;
             
         } 
+
+
         #Para{
                 font-family: 'Times New Roman', Times, serif;
                 font-size:25px;
@@ -104,28 +138,28 @@
             margin-left : auto;
         }
         
-        #menu, #menu ul{
+        #menu-demo2, #menu-demo2 ul{
             padding:0;
             margin:0;
             list-style:none; /* permet de supprimer les puces */
             text-align:center;
         }
-        #menu li{
+        #menu-demo2 li{
             display:inline-block;
             position:relative;
             border-radius:8px 8px 0 0;
         }
-        #menu ul li{
+        #menu-demo2 ul li{
             display:inherit;
             border-radius:0;
         }
-        #menu ul li:hover{
+        #menu-demo2 ul li:hover{
             border-radius:0; /* border radius défini la taille des angle */
         }
-        #menu ul li:last-child{
+        #menu-demo2 ul li:last-child{
             border-radius:0 0 8px 8px;
         }
-        #menu ul{
+        #menu-demo2 ul{
             position:absolute;
             z-index: 1000;
             max-height:0;
@@ -136,107 +170,116 @@
             -webkit-transition: .8s all .3s;
             transition: .8s all .3s;
         }
-        #menu li:hover ul{
+        #menu-demo2 li:hover ul{
             max-height:15em; /*  em est la taille de la police de caractère */
         }
         /* background des liens menus */
-        #menu li:first-child{
+        #menu-demo2 li:first-child{
             background-color: #65537A;
             background-image:-webkit-linear-gradient(top, #65537A 0%, #2A2333 100%);
             background-image:linear-gradient(to bottom, #65537A 0%, #2A2333 100%);
         }
-        #menu li:nth-child(2){
+        #menu-demo2 li:nth-child(2){
             background-color: #729EBF;
             background-image: -webkit-linear-gradient(top, #729EBF 0%, #333A40 100%);
             background-image:linear-gradient(to bottom, #729EBF 0%, #333A40 100%);
         }
-        #menu li:nth-child(3){
+        #menu-demo2 li:nth-child(3){
             background-color: #F6AD1A;
             background-image:-webkit-linear-gradient(top, #F6AD1A 0%, #9F391A 100%);
             background-image:linear-gradient(to bottom, #F6AD1A 0%, #9F391A 100%);
         }
-        #menu li:last-child{
+        #menu-demo2 li:last-child{
             background-color: rgb(62, 11, 66);
             background-image:-webkit-linear-gradient(top, #65537A 0%, #2A2333 100%);
             background-image:linear-gradient(to bottom, #65537A 0%, #2A2333 100%);
         }
         /* background des liens sous menus */
-        #menu li:first-child li{
+        #menu-demo2 li:first-child li{
             background:#677F35;
         }
-        #menu li:nth-child(2) li{
+        #menu-demo2 li:nth-child(2) li{
             background:#333A40;
         }
-        #menu li:nth-child(3) li{
+        #menu-demo2 li:nth-child(3) li{
             background:#9F391A;
         }
-        #menu li:last-child li{
+        #menu-demo2 li:last-child li{
             background:#2A2333; 
         }
         /* background des liens menus et sous menus au survol */
-        #menu li:first-child:hover, #menu li:first-child li:hover{
+        #menu-demo2 li:first-child:hover, #menu-demo2 li:first-child li:hover{
             background:#65537A;
         }
-        #menu li:nth-child(2):hover, #menu li:nth-child(2) li:hover{
+        #menu-demo2 li:nth-child(2):hover, #menu-demo2 li:nth-child(2) li:hover{
             background:#729EBF;
         }
-        #menu li:nth-child(3):hover, #menu li:nth-child(3) li:hover{
+        #menu-demo2 li:nth-child(3):hover, #menu-demo2 li:nth-child(3) li:hover{
             background:#F6AD1A;
         }
-        #menu li:last-child:hover, #menu li:last-child li:hover{
+        #menu-demo2 li:last-child:hover, #menu-demo2 li:last-child li:hover{
             background:#65537A;
         }
         /* les a href */
-        #menu a{
+        #menu-demo2 a{
             text-decoration:none;
             display:block;
             padding:8px 100px; /* taille des blocks */
             color:#fff;
             font-family:arial;
         }
-        #menu ul a{
+        #menu-demo2 ul a{
             padding:8px 0;
         }
-        #menu li:hover li a{
+        #menu-demo2 li:hover li a{
             color:#fff;
             text-transform:inherit;
         }
-        #menu li:hover a, #menu li li:hover a{
+        #menu-demo2 li:hover a, #menu-demo2 li li:hover a{
             color:#000;
         }
     
         .col-lg-offset-6 {
             margin-left: 50%;
         }
+
     </style>
 
     <body>
 
         <script type="text/javascript">
-            var Led = false;
             var Sound = true;
-            function changeImage(img){
-                if(img.src=="https://image.noelshack.com/fichiers/2018/26/1/1529918985-ampoff.png"){
-                    img.src="https://image.noelshack.com/fichiers/2018/25/5/1529672847-ampon.png";
-                    Led = true; 
+            var Led = 0;
+
+            function changeImage(img) {
+
+                if (Led == 0) {
+                    img.src = "https://image.noelshack.com/fichiers/2018/25/5/1529672847-ampon.png";
+                    // Snippet compliant from the API 1.8.2 (Constellation-1.8.2.js) 
+                    constellation.server.sendMessage({ Scope: 'Package', Args: ['TeddyControllerPython'] }, 'lightsCallback', "True");
+                    Led = 1;
                 }
                 else {
-                    img.src="https://image.noelshack.com/fichiers/2018/26/1/1529918985-ampoff.png"; 
-                    Led = false;
+                    img.src = "https://image.noelshack.com/fichiers/2018/26/1/1529918985-ampoff.png";
+                    // Snippet compliant from the API 1.8.2 (Constellation-1.8.2.js) 
+                    constellation.server.sendMessage({ Scope: 'Package', Args: ['TeddyControllerPython'] }, 'lightsCallback', "False");
+                    Led = 0;
                 }
             }
+
             function changeImageS(img){
                 if(img.src=="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundon.png"){
-                    img.src="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundoff.png"; 
+                    img.src="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundoff.png";
                     Sound = false;
                 }
                 else {
-                    img.src="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundon.png"; 
+                    img.src="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundon.png";
                     Sound = true;
                 }
             }
 
         </script>
+
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -252,14 +295,14 @@
                 </div>
             </div>
         </div>
-    <div class="container">
-            <center><div class="row">
+        <div class="container">
+            <div class="row">
                 <div class="col-lg-2">
-                    <img id="Led" src="https://image.noelshack.com/fichiers/2018/26/1/1529918985-ampoff.png" alt="" onclick="changeImage(this);">
+                    <img id="Led" src="https://image.noelshack.com/fichiers/2018/26/2/1530007761-amp.png" alt="" onclick="changeImage(this)">
                 </div>
                 <div class="col-lg-8">
                     <div id="boiteM">
-                        <ul id="menu">
+                        <ul id="menu-demo2">
                             <li><a href="#">Berceuse</a>
                                 <ul>
                                     <li><a href="#">Chant des cigognes</a></li>
@@ -277,7 +320,7 @@
                 <div class="col-lg-2">
                     <img id="Logo" src= "https://image.noelshack.com/fichiers-md/2018/24/5/1529076305-kirbylogoappt.png" alt""/>
                 </div>
-            </div></center>
+            </div>
         </div>
         <div class="container">
             <div class="row">
@@ -292,13 +335,13 @@
                 <div class="col-lg-6">
                     <div id="co2">
                     <center><p id="Para">Le taux de Co2 dans la pièce est de : </p> </center>
-                    <center><p id="ValeurConst"> 20 ppm</p></center>
+                    <center><span id="CO2Level"></span> %</center>
                     </div> 
                 </div>
                 <div class="col-lg-6">
                     <div id="temp">
                     <center><p id="Para">La température de la pièce est de : </p></center>
-                    <center><p id="ValeurConst"> 20 °C</p></center>
+                    <center><span id="Temperature"></span>°C</center>
                     </div>
                 </div>
             </div>
@@ -316,7 +359,7 @@
                 <div class="col-lg-6">
                     <div id="decibels">
                     <center><p id="Para">La valeur du son dans la pièce est de : </p></center>
-                    <center><p id="ValeurConst"> 20dB</p></center>
+                    <center><p id="SoundLevel"> dB</p></center>
                     </div>
                 </div>
                 <div class="col-lg-6">
