@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="js/bootstrap.min.js">
 
         <title>Test API AngularJS</title>
+
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
         <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/signalr/jquery.signalr-2.2.2.min.js"></script>
         <script type="text/javascript" src="https://cdn.myconstellation.io/js/Constellation-1.8.2.min.js"></script>
@@ -18,22 +19,54 @@
 
         <script>
             var constellation = $.signalR.createConstellationConsumer("http://192.168.137.1:8088", "123456789", "Test API JS");
-
+            var myDemoApp = angular.module('MyDemoApp', ['ngConstellation']);
+            var salut = 1;
             constellation.connection.start();
 
-            constellation.connection.stateChanged(function (change) {
-                if (change.newState === $.signalR.connectionState.connected) {
-                    console.log("Je suis connecté");
+            myDemoApp.controller('MyController', ['$scope',  'constellationConsumer', function ($scope, constellation) {
 
-                    constellation.client.registerStateObjectLink("*", "TeddyControllerPython", "Sensors", "*", function (so) {
-                        console.log(so);
-                        $("#CO2Level").text(so.Value.CO2Level);
-                        $("#SoundLevel").text(so.Value.SoundLevel);
-                        $("#Temperature").text(so.Value.Temperature);
-                        $("#Ledstate").text(so.Value.Ledstate);
+                constellation.initializeClient("http://192.168.137.1:8088", "123456789", "Ma Page Web");
+                    constellation.onConnectionStateChanged(function (change) {
+                        if (change.newState === $.signalR.connectionState.connected) {
+                            console.log("Je suis connecté !");
+
+                            constellation.registerStateObjectLink("*","TeddyControllerPython", "*" ,"*", function(so){
+                                //console.log(so);
+                                $("#CO2Level").text(so.Value.CO2Level);
+                                $("#SoundLevel").text(so.Value.SoundLevel);
+                                $("#Temperature").text(so.Value.Temperature);
+                                $("#Ledstate").text(so.Value.Ledstate);
+                                $scope.$apply();
+                                if (salut == 1){
+                                    //$scope.push = function () {
+                                    if (so.Value.SoundLevel > 65){
+                                        constellation.sendMessage({ Scope: 'Package', Args: ['PushBullet'] }, 'PushNote', "Alerte", "Votre enfant pleure :(");
+                                        salut = 0;
+                                    }
+                                }
+                                else {
+                                    if (so.Value.SoundLevel < 60) {
+                                        salut = 1;
+                                    }
+                                }
+                       
+                            });
+                            $scope.BebeDodo = function () {
+                                constellation.sendMessage({ Scope: 'Package', Args: ['MusiquePI'] }, 'Play', "Bebe-dodo");
+                            }
+                            $scope.BrilleBrille = function () {
+                                constellation.sendMessage({ Scope: 'Package', Args: ['MusiquePI'] }, 'Play', "BrilleBrille");
+                            }
+                        }
+
+                        $scope.IsConnected = (change.newState === $.signalR.connectionState.connected);
+                        $scope.$apply();
                     });
-                }
-            });
+                    
+                    
+                constellation.connect();
+       }]);
+
 
         </script>
         
@@ -245,14 +278,13 @@
 
     </style>
 
-    <body>
-
+    <body ng-controller="MyController">
         <script type="text/javascript">
             var Sound = true;
             var Led = 0;
 
+            //Fonction pour changer la couleur de l'image de la led sur le site
             function changeImage(img) {
-
                 if (Led == 0) {
                     img.src = "https://image.noelshack.com/fichiers/2018/25/5/1529672847-ampon.png";
                     // Snippet compliant from the API 1.8.2 (Constellation-1.8.2.js) 
@@ -266,8 +298,10 @@
                     Led = 0;
                 }
             }
+            
 
-            function changeImageS(img){
+            //Fonction pour changer la couleur de l'image du son sur le site
+            function changeImageS(img) {
                 if(img.src=="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundon.png"){
                     img.src="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundoff.png";
                     Sound = false;
@@ -305,13 +339,8 @@
                         <ul id="menu-demo2">
                             <li><a href="#">Berceuse</a>
                                 <ul>
-                                    <li><a href="#">Chant des cigognes</a></li>
-                                    <li><a href="#">Camille la chenille</a></li>
-                                    <li><a href="#">Le pont d'avignon</a></li>
-                                    <li><a href="#">Petit papa Noël</a></li>
-                                    <li><a href="#">La fée Morgane</a></li>
-                                    <li><a href="#">TomTom et Nana</a></li>
-                                    <li><a href="#">Wesh alors</a></li>
+                                    <li><a  ng-click="BebeDodo()">Bébé Dodo</a></li>
+                                    <li><a ng-click="BrilleBrille()">Brille Brille</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -332,13 +361,17 @@
         </div>
         <div class="container">
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-5">
                     <div id="co2">
                     <center><p id="Para">Le taux de Co2 dans la pièce est de : </p> </center>
-                    <center><span id="CO2Level"></span> %</center>
+                    <center><span id="CO2Level"></span> PPM</center>
                     </div> 
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-2">
+                    <div id="idA">
+                    </div>
+                </div>
+                <div class="col-lg-5">
                     <div id="temp">
                     <center><p id="Para">La température de la pièce est de : </p></center>
                     <center><span id="Temperature"></span>°C</center>
@@ -356,26 +389,28 @@
         </div>
         <div class="container">
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                     <div id="decibels">
                     <center><p id="Para">La valeur du son dans la pièce est de : </p></center>
                     <center><p id="SoundLevel"> dB</p></center>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div id="coeur">
-                    <center><p id="Para">Le rythme cardique est de: </p></center>
-                    <center><p id="ValeurConst"> 20 B/s</p></center>
+            </div> 
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="idA">
                     </div>
                 </div>
-            </div> 
-        </div> 
-        <div classe="container">
+            </div>
+        </div>
+        <!--<div classe="container">
             <div class="row">
                 <div class="col-lg-12">
                     <center><img id="Sound" src="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundon.png" alt="" onclick="changeImageS(this);"></center>
                 </div>
             </div>
-        </div>  
+        </div>-->  
     </body>
 </html>
