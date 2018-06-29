@@ -39,13 +39,13 @@
                                 $scope.$apply();
                                 if (salut == 1){
                                     //$scope.push = function () {
-                                    if (so.Value.SoundLevel > 65){
+                                    if (so.Value.SoundLevel > 80){
                                         constellation.sendMessage({ Scope: 'Package', Args: ['PushBullet'] }, 'PushNote', "Alerte", "Votre enfant pleure :(");
                                         salut = 0;
                                     }
                                 }
                                 else {
-                                    if (so.Value.SoundLevel < 60) {
+                                    if (so.Value.SoundLevel < 55) {
                                         salut = 1;
                                     }
                                 }
@@ -84,7 +84,7 @@
             background-size: cover; 
         }
     
-    #idA{
+    #idA{                       /* Bloc qui va nous permettre de mettre un espace transparent entre deux affichages afin qu'ils ne soient pas côte à côte*/
         display: inline-block;
         width: 100px;
         height: 100px;
@@ -314,15 +314,15 @@
 
         </script>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
+        <div class="container">  <!-- Pour organiser notre site web nous avons décider d'utiliser Bootstrap qui nous permet de voir notre site sous forme de grille -->
+            <div class="row">   <!-- on prend la première ligne -->
+                <div class="col-lg-12"> <!-- On lui dit combien de colonne il doit prendre sachant qu'il y a 12 colonne maximum -->
                     <center><h1 id="Titre">Hey, Arnold!</h1></center>
                 </div>
             </div>
         </div>
-        <div class="container">
-            <div class="row">
+        <div class="container">     <!-- on refait la même chose pour tout ce que l'on doit afficher -->
+            <div class="row">   
                 <div class="col-lg-12">
                     <div id="idA">
                     </div>
@@ -364,7 +364,7 @@
                 <div class="col-lg-5">
                     <div id="co2">
                     <center><p id="Para">Le taux de Co2 dans la pièce est de : </p> </center>
-                    <center><span id="CO2Level"></span> PPM</center>
+                    <center><p id="ValeurConst"><span id="CO2Level"></span> PPM</p></center>
                     </div> 
                 </div>
                 <div class="col-lg-2">
@@ -374,7 +374,7 @@
                 <div class="col-lg-5">
                     <div id="temp">
                     <center><p id="Para">La température de la pièce est de : </p></center>
-                    <center><span id="Temperature"></span>°C</center>
+                    <center><p id="ValeurConst"><span id="Temperature"></span> °C</p></center>
                     </div>
                 </div>
             </div>
@@ -392,7 +392,7 @@
                 <div class="col-lg-12">
                     <div id="decibels">
                     <center><p id="Para">La valeur du son dans la pièce est de : </p></center>
-                    <center><p id="SoundLevel"> dB</p></center>
+                    <center><p id="ValeurConst"><span id="SoundLevel"></span> dB</p></center>
                     </div>
                 </div>
             </div> 
@@ -405,12 +405,5 @@
                 </div>
             </div>
         </div>
-        <!--<div classe="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <center><img id="Sound" src="https://image.noelshack.com/fichiers/2018/26/1/1529917613-soundon.png" alt="" onclick="changeImageS(this);"></center>
-                </div>
-            </div>
-        </div>-->  
     </body>
 </html>
