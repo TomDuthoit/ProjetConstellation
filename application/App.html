@@ -20,7 +20,7 @@
         <script>
             var constellation = $.signalR.createConstellationConsumer("http://192.168.137.1:8088", "123456789", "Test API JS");
             var myDemoApp = angular.module('MyDemoApp', ['ngConstellation']);
-            var stestSon = 1;
+            var testSon = 1;
             constellation.connection.start();
 
             myDemoApp.controller('MyController', ['$scope',  'constellationConsumer', function ($scope, constellation) {
@@ -37,16 +37,16 @@
                                 $("#Temperature").text(so.Value.Temperature);
                                 $("#Ledstate").text(so.Value.Ledstate);
                                 $scope.$apply();
-                                if (stestSon == 1){
+                                if (testSon == 1){
                                     //$scope.push = function () {
                                     if (so.Value.SoundLevel > 80){
                                         constellation.sendMessage({ Scope: 'Package', Args: ['PushBullet'] }, 'PushNote', "Alerte", "Votre enfant pleure :(");
-                                        stestSon = 0;
+                                        testSon = 0;
                                     }
                                 }
                                 else {
                                     if (so.Value.SoundLevel < 55) {
-                                        stestSon = 1;
+                                        testSon = 1;
                                     }
                                 }
                        
